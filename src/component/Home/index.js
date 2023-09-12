@@ -46,21 +46,19 @@ class Home extends Component {
   }
 
   onChangeSelect = event => {
-    this.setState({categories: event.target.value})
+    this.setState({categories: event.target.value}, this.getProjectList)
   }
 
   getProjectList = async () => {
     const {categories} = this.state
     this.setState({apiStatus: apiStatusConstants.inProgress})
-    const apiUrl = `https://apis.ccbp.in/ps/projects?categories=${categories}`
+    const apiUrl = `https://apis.ccbp.in/ps/projects?category=${categories}`
     const options = {
       method: 'GET',
     }
-
     const response = await fetch(apiUrl, options)
     if (response.ok) {
       const data = await response.json()
-      console.log(data)
       const updatedData = data.projects.map(eachPro => ({
         id: eachPro.id,
         name: eachPro.name,
@@ -87,8 +85,8 @@ class Home extends Component {
           alt="failure view"
         />
         <FailHeading>Oops! Something went wrong</FailHeading>
-        <FailDesc>We Cannot seen to find the page you are looking for</FailDesc>
-        <FailBtn type="button" onClick={this.onRetry()}>
+        <FailDesc>We cannot seem to find the page you are looking for</FailDesc>
+        <FailBtn type="button" onClick={this.onRetry}>
           onRetry
         </FailBtn>
       </Failure>
@@ -109,8 +107,8 @@ class Home extends Component {
         <CardContainer>
           <CardList>
             {projectList.map(item => (
-              <Cards>
-                <Image src={item.imageUrl} alt="content" />
+              <Cards key={item.id}>
+                <Image src={item.imageUrl} alt={item.name} />
                 <Content>{item.name}</Content>
               </Cards>
             ))}
